@@ -3,11 +3,39 @@ var canvas, ctx;
 
 window.addEventListener('load', init);
 
+window.addEventListener('keydown', keydownListener);
+window.addEventListener('keyup', keyupListener);
+
+var img;
+
+var keyMap = {
+	65: 'LEFT',
+	37: 'LEFT',
+	87: 'UP',
+	38: 'UP',
+	68: 'RIGHT',
+	39: 'RIGHT',
+	83: 'DOWN',
+	40: 'DOWN'
+}
+
+var keys = { }
+
+function keydownListener(e) {
+	var key = keyMap[e.keyCode];
+	if (key) { keys[key] = true; }
+}
+
+function keyupListener(e) {
+	var key = keyMap[e.keyCode];
+	if (key) { delete keys[key]; }
+}
+
 function init() {
 	log('window loaded!');
 	setupCanvas();
 
-	var img = new ReaderImage();
+	img = new ReaderImage();
 	img.x = 5;
 	img.y = 10;
 
@@ -29,10 +57,14 @@ function setupCanvas() {
 }
 
 function renderCanvas() {
+	// Clear the canvas.
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	// Render all images.
 	for (var id in ReaderImage.all) {
 		ReaderImage.all[id].render(ctx);
 	}
+	log(keys);
+	window.requestAnimationFrame(renderCanvas);
 }
 
 
@@ -40,6 +72,10 @@ function ReaderImage() {
 	this.id = ++ReaderImage.lastId;
 	this.x;
 	this.y;
+	this.dx = 0;
+	this.dy = 0;
+	this.ddx = 0;
+	this.ddy = 0;
 	this.width = 300;
 	this.height = 100;
 	this.color = '#f0a';
@@ -56,7 +92,12 @@ ReaderImage.lastId = 0;
 ReaderImage.prototype.render = function(ctx) {
 	ctx.fillStyle = this.color;
 	ctx.fillRect(this.x, this.y, this.width, this.height);
-
+	// Update for next frame.
+	this.dx += this.ddx;
+	this.dy += this.ddy;
+	this.x += this.dx;
+	this.y += this.dy;
+	//log(this.x, this.y);
 
 }
 
