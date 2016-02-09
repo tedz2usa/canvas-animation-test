@@ -99,7 +99,7 @@ ReaderImage.prototype.render = function(ctx) {
 
 ReaderImage.prototype.move = function() {
 
-	var acceleration = 0.8;
+	var acceleration = 1;
 
 	if (keys['LEFT'] || keys['RIGHT']) {
 		if (keys['LEFT']) {
@@ -128,7 +128,7 @@ ReaderImage.prototype.move = function() {
 	this.dx += this.ddx;
 	this.dy += this.ddy;
 
-	var maxSpeed = 5;
+	var maxSpeed = 10;
 
 	if (this.dx >  maxSpeed) { this.dx =  maxSpeed; }
 	if (this.dx < -maxSpeed) { this.dx = -maxSpeed; }
