@@ -90,14 +90,66 @@ ReaderImage.lastId = 0;
 
 // Takes a canvas 2d rendering context as input.
 ReaderImage.prototype.render = function(ctx) {
+	this.move();
 	ctx.fillStyle = this.color;
 	ctx.fillRect(this.x, this.y, this.width, this.height);
+	
+	//log(this.x, this.y);
+}
+
+ReaderImage.prototype.move = function() {
+
+	var acceleration = 0.8;
+
+	if (keys['LEFT'] || keys['RIGHT']) {
+		if (keys['LEFT']) {
+			this.ddx = -acceleration;
+		}
+		if (keys['RIGHT']) {
+			this.ddx = acceleration;
+		}
+	} else {
+		this.ddx = 0;
+	}
+	
+	if (keys['UP'] || keys['DOWN']) {
+		if (keys['UP']) {
+			this.ddy = -acceleration;
+		}
+		if (keys['DOWN']) {
+			this.ddy = acceleration;
+		}
+	} else {
+		this.ddy = 0;
+	}
+	
+
 	// Update for next frame.
 	this.dx += this.ddx;
 	this.dy += this.ddy;
+
+	var maxSpeed = 5;
+
+	if (this.dx >  maxSpeed) { this.dx =  maxSpeed; }
+	if (this.dx < -maxSpeed) { this.dx = -maxSpeed; }
+	if (this.dy >  maxSpeed) { this.dy =  maxSpeed; }
+	if (this.dy < -maxSpeed) { this.dy = -maxSpeed; }
+
+	var friction = 0.95;
+
+	this.dx *= friction;
+	this.dy *= friction;
+
+	var stopThreshold = 0.2;
+	if (Math.abs(this.dx) < stopThreshold) { this.dx = 0; }
+	if (Math.abs(this.dy) < stopThreshold) { this.dy = 0; }
+
+	log('F: ', this.ddx, this.ddy, '    V: ', this.dx, this.dy, '    P: ', this.x, this.y);
+
 	this.x += this.dx;
 	this.y += this.dy;
-	//log(this.x, this.y);
+
+
 
 }
 
